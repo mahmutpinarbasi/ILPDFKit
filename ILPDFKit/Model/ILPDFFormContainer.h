@@ -47,6 +47,8 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (instancetype)initWithParentDocument:(ILPDFDocument *)parent NS_DESIGNATED_INITIALIZER;
 
+- (instancetype)initWithParentDocument:(ILPDFDocument *)parent autoFillDelegat:(id<ILPDFAutoFillDelegate>)autoFillDelegate NS_DESIGNATED_INITIALIZER;
+
 /**---------------------------------------------------------------------------------------
  * @name Retrieving Forms
  *  ---------------------------------------------------------------------------------------

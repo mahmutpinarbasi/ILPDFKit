@@ -90,6 +90,8 @@ NS_ASSUME_NONNULL_BEGIN
  */
 - (instancetype)initWithResource:(NSString *)name NS_DESIGNATED_INITIALIZER;
 
+- (instancetype)initWithResource:(NSString *)name delegate:(id<ILPDFAutoFillDelegate>)autoFillDelegate NS_DESIGNATED_INITIALIZER;
+
 /** Creates a new instance of ILPDFDocument.
  
  @param path Points to PDF file to load.

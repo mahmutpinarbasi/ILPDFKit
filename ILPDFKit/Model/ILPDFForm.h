@@ -23,6 +23,7 @@
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
 
+
 typedef NS_OPTIONS(NSUInteger, ILPDFAnnotationFlags) {
     ILPDFAnnotationFlagInvisible      = 1 << 0,
     ILPDFAnnotationFlagHidden         = 1 << 1,
@@ -55,6 +56,10 @@ typedef NS_ENUM(NSUInteger, ILPDFFormType) {
     ILPDFFormTypeSignature,
     ILPDFFormTypeNumberOfFormTypes
 };
+
+@protocol ILPDFAutoFillDelegate <NSObject>
+- (id _Nullable)formValueForName:(NSString * _Nonnull)name formType:(ILPDFFormType)formType;
+@end
 
 @class ILPDFFormContainer;
 @class ILPDFPage;

@@ -48,6 +48,10 @@ static void renderPage(NSUInteger page, CGContextRef ctx, CGPDFDocumentRef doc, 
     }
 }
 
+@interface ILPDFDocument()
+@property (nonatomic, assign) id<ILPDFAutoFillDelegate> autoFillDelegate;
+@end
+
 @implementation ILPDFDocument {
     NSString *_documentPath;
     ILPDFDictionary *_catalog;
@@ -92,6 +96,19 @@ static void renderPage(NSUInteger page, CGContextRef ctx, CGPDFDocumentRef doc, 
     return self;
 }
 
+- (instancetype)initWithResource:(NSString *)name delegate:(id<ILPDFAutoFillDelegate>)autoFillDelegate{
+    NSParameterAssert(name);
+    self = [super init];
+    if (self != nil) {
+        _autoFillDelegate = autoFillDelegate;
+        if ([[[name componentsSeparatedByString:@"."] lastObject] isEqualToString:@"pdf"])
+            name = [name substringToIndex:name.length-4];
+        _document = [ILPDFUtility createPDFDocumentRefFromResource:name];
+        _documentPath = [[NSBundle mainBundle] pathForResource:name ofType:@"pdf"] ;
+    }
+    return self;
+}
+
 - (instancetype)initWithPath:(NSString *)path {
     NSParameterAssert(path);
     self = [super init];
@@ -114,7 +131,7 @@ static void renderPage(NSUInteger page, CGContextRef ctx, CGPDFDocumentRef doc, 
 
 - (ILPDFFormContainer *)forms {
     if (_forms == nil) {
-        _forms = [[ILPDFFormContainer alloc] initWithParentDocument:self];
+        _forms = [[ILPDFFormContainer alloc] initWithParentDocument:self autoFillDelegat:_autoFillDelegate];
     }
     return _forms;
 }

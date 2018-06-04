@@ -37,6 +37,10 @@
 - (void)removeForm:(ILPDFForm *)form;
 @end
 
+@interface ILPDFFormContainer()
+@property (nonatomic, assign) id<ILPDFAutoFillDelegate> autoFillDelegate;
+@end
+
 @implementation ILPDFFormContainer {
     NSMutableArray *_allForms;
     NSMutableDictionary *_nameTree;
@@ -52,21 +56,35 @@
 }
 
 #pragma mark - Initialization
+- (void)commonInit{
+    _allForms = [[NSMutableArray alloc] init];
+    _nameTree = [[NSMutableDictionary alloc] init];
+    NSMutableDictionary *pmap = [NSMutableDictionary dictionary];
+    for (ILPDFPage *page in _document.pages) {
+        pmap[@((NSUInteger)(page.dictionary.dict))] = @(page.pageNumber);
+    }
+    for (ILPDFDictionary *field in _document.catalog[@"AcroForm"][@"Fields"]) {
+        [self enumerateFields:field pageMap:pmap];
+    }
+}
 
 - (instancetype)initWithParentDocument:(ILPDFDocument *)parent {
     NSParameterAssert(parent);
     self = [super init];
     if (self != nil) {
-        _allForms = [[NSMutableArray alloc] init];
-        _nameTree = [[NSMutableDictionary alloc] init];
         _document = parent;
-        NSMutableDictionary *pmap = [NSMutableDictionary dictionary];
-        for (ILPDFPage *page in _document.pages) {
-            pmap[@((NSUInteger)(page.dictionary.dict))] = @(page.pageNumber);
-        }
-        for (ILPDFDictionary *field in _document.catalog[@"AcroForm"][@"Fields"]) {
-            [self enumerateFields:field pageMap:pmap];
-        }
+        [self commonInit];
+    }
+    return self;
+}
+
+- (instancetype)initWithParentDocument:(ILPDFDocument *)parent autoFillDelegat:(id<ILPDFAutoFillDelegate>)autoFillDelegate{
+    NSParameterAssert(parent);
+    self = [super init];
+    if (self != nil) {
+        _document = parent;
+        _autoFillDelegate = autoFillDelegate;
+        [self commonInit];
     }
     return self;
 }
@@ -108,8 +126,15 @@
 #pragma mark - Adding and Removing Forms
 
 - (void)addForm:(ILPDFForm *)form {
+    if ([self.autoFillDelegate respondsToSelector:@selector(formValueForName:formType:)]) {
+        id val = [self.autoFillDelegate formValueForName:form.name formType:form.formType];
+        form.value = val;
+    }
     [_allForms addObject:form];
-    [self populateNameTreeNode:_nameTree withComponents:[form.name componentsSeparatedByString:@"."] final:form];
+    NSArray * components = [form.name componentsSeparatedByString:@"."];
+    NSPredicate * p = [NSPredicate predicateWithFormat:@"SELF.length != 0"];
+    components = [components filteredArrayUsingPredicate:p];
+    [self populateNameTreeNode:_nameTree withComponents:components final:form];
 }
 
 - (void)removeForm:(ILPDFForm *)form {
