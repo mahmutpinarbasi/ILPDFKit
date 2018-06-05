@@ -128,6 +128,10 @@
 - (void)addForm:(ILPDFForm *)form {
     if ([self.autoFillDelegate respondsToSelector:@selector(formValueForName:formType:)]) {
         id val = [self.autoFillDelegate formValueForName:form.name formType:form.formType];
+        if (form.formType==ILPDFFormTypeButton) {
+            ILPDFFormButtonField * button = (ILPDFFormButtonField *)form.associatedWidget;
+            button.exportValue = val;
+        }
         form.value = val;
     }
     [_allForms addObject:form];
