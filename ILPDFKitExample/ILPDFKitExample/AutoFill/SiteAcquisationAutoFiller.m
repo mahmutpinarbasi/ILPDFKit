@@ -13,14 +13,8 @@
 
 #pragma mark - <ILPDFAutoFillDelegate>
 - (id _Nullable)formValueForName:(NSString * _Nonnull)name formType:(ILPDFFormType)formType{
-    if (![name isKindOfClass:[NSString class]]) {
-        NSLog(@"not string");
-        return nil;
-    }else{
-        NSLog(@"%@",name);
-        return nil;
-
-    }
+    NSLog(@"form key...%@",name);
+    return @"MAHMUT PINARBAŞI";
 }
 
 

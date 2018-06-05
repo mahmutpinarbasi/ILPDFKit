@@ -51,7 +51,7 @@ FOUNDATION_EXPORT const unsigned char ILPDFKitVersionString[];
 #define isODelim(c) ((c) == '(' ||  (c) == '<' ||  (c) == '[')
 #define isCDelim(c) ((c) == ')' ||  (c) == '>' ||  (c) == ']')
 
-#define ILPDFFormMinFontSize 8
+#define ILPDFFormMinFontSize 10
 #define ILPDFFormMaxFontSize 22
 
 
