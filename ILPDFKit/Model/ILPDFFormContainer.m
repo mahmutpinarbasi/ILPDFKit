@@ -131,8 +131,12 @@
         if (form.formType==ILPDFFormTypeButton) {
             ILPDFFormButtonField * button = (ILPDFFormButtonField *)form.associatedWidget;
             button.exportValue = val;
+            form.value = val;
+            button.value = val;
+            [button refresh];
+        }else{
+            form.value = val;
         }
-        form.value = val;
     }
     [_allForms addObject:form];
     NSArray * components = [form.name componentsSeparatedByString:@"."];
